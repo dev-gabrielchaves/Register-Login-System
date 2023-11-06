@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form class="form" action="" method="POST">
+        {{ form.hidden_tag() }} <!-- Check out on the documentation, but this is necessary to validate and secure our form, use csrf tokken if it's a single field, and hidden_tag() if it's more than one -->
+        <fieldset>
+            <legend>Login</legend>
+            <div class="form-group">
+                {{ form.email.label }} <!-- This will generate a label with the name that we've set in the first parameter of the field in our form -->
+                {% if form.email.errors %}
+                    {{ form.email }} <!-- This will generate the field itself -->
+                    {% for error in form.email.errors %}
+                        {{error}}
+                    {% endfor %}
+                {% else %}
+                    {{ form.email }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.password.label }}
+                {% if form.password.errors %}
+                    {{ form.password }} <!-- This will generate the field itself -->
+                    {% for error in form.password.errors %}
+                        {{error}}
+                    {% endfor %}
+                {% else %}
+                    {{ form.password }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.submit }}
+            </div>
+        </fieldset>
+    </form>
+    <!-- It is not necessary to import 'url_for' in our application, Jinja2 has it by default -->
+    <span>Dont't have an account? <a href="{{url_for('register')}}">Register</a></span>
+{% endblock content %}
