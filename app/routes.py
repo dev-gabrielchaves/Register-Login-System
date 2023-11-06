@@ -1,6 +1,7 @@
 from flask import render_template, redirect, url_for, flash
-from app import app
+from app import app, db
 from app.forms import RegistrationForm, LoginForm
+from app.models import User
 
 @app.route('/')
 def home():
@@ -10,6 +11,11 @@ def home():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit(): # Note that you don’t have to pass request.form to Flask-WTF, it will load automatically. And the convenient validate_on_submit will check if it is a POST request and if it is valid.
+        # Instantiating class User and giving it's attribute 
+        user = User(username=form.username.data, email=form.email.data, password=form.password.data)
+        # Adding user to the database
+        db.session.add(user)
+        db.session.commit()
         # The flashing system basically makes it possible to record a message at the end of a request and access it next request and only next request.
         # Another thing about flash messages, you got have a secret key set, otherwise it won't work
         flash("You've been registered successfully!") # So here I've set a flash message, and that message will just be used for the next request
