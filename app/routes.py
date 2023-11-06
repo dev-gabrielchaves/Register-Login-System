@@ -1,5 +1,5 @@
 from flask import render_template, redirect, url_for, flash
-from app import app, db
+from app import app, db, bcrypt
 from app.forms import RegistrationForm, LoginForm
 from app.models import User
 
@@ -11,8 +11,9 @@ def home():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit(): # Note that you don’t have to pass request.form to Flask-WTF, it will load automatically. And the convenient validate_on_submit will check if it is a POST request and if it is valid.
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         # Instantiating class User and giving it's attribute 
-        user = User(username=form.username.data, email=form.email.data, password=form.password.data)
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         # Adding user to the database
         db.session.add(user)
         db.session.commit()
