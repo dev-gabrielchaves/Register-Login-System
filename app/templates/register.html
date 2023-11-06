@@ -7,7 +7,7 @@
             <div class="form-group">
                 {{ form.username.label }}
                 <!-- Within this if statement there is just the field validation, it will trown an error in case there is some -->
-                <!-- At first it won't show something, but when rendering the page again it will -->
+                <!-- At first it won't show something, but when rendering the page again it will in case there are errors -->
                 {% if form.username.errors %}
                     {{ form.username }}
                     {% for error in form.username.errors %}
