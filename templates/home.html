@@ -1,4 +1,25 @@
 {% extends 'base.html' %}
 {% block content %}
+    <!-- By default "get_flashed_messages" returns an empty list -->
+    <!-- So if I print this on the screen: "get_flashed_messages", it will come "[]" in case there's not a flash message to be shown -->
+    <!-- Something that I didn't understand was the "with" statement in Jinja2 -->
+    <!-- But after some research what I found is that what it basically does is to define a variable within a scope -->
+    <!-- That scope is anything between "with ..." and "endwith" -->
+    {% with messages = get_flashed_messages() %}
+        <!-- So if there is messages, get in the if statement -->
+        {% if messages %}
+            <!-- Loop through each message that needs to be shown -->
+            {% for message in messages %} 
+                <!-- Print the message -->
+                {{message}} 
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     <h1>This is the home page!</h1>
+    <div>
+        <p>If you wanna login, click <a href="{{url_for('login')}}">here</a>!</p>
+    </div>
+    <div>
+        <p>If you wanna register, click <a href="{{url_for('register')}}">here</a>!</p>
+    </div>
 {% endblock content %}

@@ -1,5 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %} 
+                {{message}} 
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     <form class="form" action="" method="POST">
         {{ form.hidden_tag() }} <!-- Check out on the documentation, but this is necessary to validate and secure our form, use csrf tokken if it's a single field, and hidden_tag() if it's more than one -->
         <fieldset>
