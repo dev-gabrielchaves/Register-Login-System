@@ -28,6 +28,10 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        flash("You've been logged in successfully!")
-        return redirect(url_for('home'))
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            flash("You've been logged in successfully!")
+            return redirect(url_for('home'))
+        else:
+            flash("Couldn't find the user. Please check your email and password.")
     return render_template('login.html', form=form)
