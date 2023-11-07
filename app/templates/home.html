@@ -1,5 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
+    {% if username %}
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    {{message}}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <h1>Welcome to the home page {{username}}!</h1>
+        <div>
+            <p>If you wanna logout click <a href="{{url_for('logout')}}">here</a>!</p>
+        </div>
+        <div>Click <a href="{{url_for('protected')}}">here</a> if you want to access your page!</div>
+    {% else %}
     <!-- By default "get_flashed_messages" returns an empty list -->
     <!-- So if I print this on the screen: "get_flashed_messages", it will come "[]" in case there's not a flash message to be shown -->
     <!-- Something that I didn't understand was the "with" statement in Jinja2 -->
@@ -22,4 +36,5 @@
     <div>
         <p>If you wanna register, click <a href="{{url_for('register')}}">here</a>!</p>
     </div>
+    {% endif %}
 {% endblock content %}

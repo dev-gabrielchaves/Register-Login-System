@@ -1,11 +1,11 @@
-from flask import render_template, redirect, url_for, flash
+from flask import render_template, redirect, url_for, flash, session, abort
 from app import app, db, bcrypt
 from app.forms import RegistrationForm, LoginForm
 from app.models import User
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    return render_template('home.html', username=session.get('username'))
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
@@ -20,7 +20,10 @@ def register():
         # The flashing system basically makes it possible to record a message at the end of a request and access it next request and only next request.
         # Another thing about flash messages, you got have a secret key set, otherwise it won't work
         flash("You've been registered successfully!") # So here I've set a flash message, and that message will just be used for the next request
-        return redirect(url_for('login'))
+        session['id'] = user.id
+        session['username'] = user.username
+        session['email'] = user.email
+        return redirect(url_for('home'))
     # print(form.errors) -> Just for testing, in case of a wrong password it will show: {'confirm_password': ['Field must be equal to password.']}
     return render_template('register.html', form=form)
 
@@ -31,7 +34,26 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             flash("You've been logged in successfully!")
+            session['id'] = user.id
+            session['username'] = user.username
+            session['email'] = user.email
             return redirect(url_for('home'))
         else:
             flash("Couldn't find the user. Please check your email and password.")
     return render_template('login.html', form=form)
+
+# Clears the session
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('home'))
+
+# You just be allowed to access this page in case there is some user in the session
+@app.route('/protected')
+def protected():
+    if session.get('username'): 
+        return render_template('protected.html', id=session.get('id'), 
+                               username=session.get('username'), 
+                               email=session.get('email'))
+    else:
+        abort(403)

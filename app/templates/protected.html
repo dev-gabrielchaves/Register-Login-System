@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>You are in your protected page!</h1>
+    <fieldset>
+        <legend>These are your credentials:</legend>
+        <ul>
+            <li>ID: {{id}}</li>
+            <li>Username: {{username}}</li>
+            <li>Email: {{email}}</li>
+        </ul>
+    </fieldset>
+{% endblock content %}
