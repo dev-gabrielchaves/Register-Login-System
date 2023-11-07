@@ -56,4 +56,4 @@ def protected():
                                username=session.get('username'), 
                                email=session.get('email'))
     else:
-        abort(403)
+        return(redirect(url_for('login')))
