@@ -10,57 +10,46 @@ def home():
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     if session.get('username'):
-        flash('You are already registered!')
+        flash('You are already registered!', 'warning')
         return redirect(url_for('home'))
     else:
         form = RegistrationForm()
-        if form.validate_on_submit(): # Note that you don’t have to pass request.form to Flask-WTF, it will load automatically. And the convenient validate_on_submit will check if it is a POST request and if it is valid.
+        if form.validate_on_submit():
             hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-            # Instantiating class User and giving it's attribute 
             user = User(username=form.username.data, email=form.email.data, password=hashed_password)
-            # Adding user to the database
             db.session.add(user)
             db.session.commit()
-            # The flashing system basically makes it possible to record a message at the end of a request and access it next request and only next request.
-            # Another thing about flash messages, you got have a secret key set, otherwise it won't work
-            flash("You've been registered successfully!") # So here I've set a flash message, and that message will just be used for the next request
-            session['id'] = user.id
-            session['username'] = user.username
-            session['email'] = user.email
-            return redirect(url_for('home'))
-        # print(form.errors) -> Just for testing, in case of a wrong password it will show: {'confirm_password': ['Field must be equal to password.']}
+            flash("You've been registered successfully!", 'success')
+            return redirect(url_for('login'))
         return render_template('register.html', form=form)
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if session.get('username'):
-        flash('You are already logged in!')
+        flash('You are already logged in!', 'warning')
         return redirect(url_for('home'))
     else:
         form = LoginForm()
         if form.validate_on_submit():
             user = User.query.filter_by(email=form.email.data).first()
             if user and bcrypt.check_password_hash(user.password, form.password.data):
-                flash("You've been logged in successfully!")
                 session['id'] = user.id
                 session['username'] = user.username
                 session['email'] = user.email
                 return redirect(url_for('home'))
             else:
-                flash("Couldn't find the user. Please check your email and password.")
+                flash("Couldn't find the user. Please check your email and password.", 'error')
         return render_template('login.html', form=form)
 
-# Clears the session
 @app.route('/logout')
 def logout():
     if session.get('username'):
         session.clear()
         return redirect(url_for('home'))
     else:
-        flash("You haven't logged in yet!")
+        flash("You haven't logged in yet!", 'error')
         return redirect(url_for('login'))
 
-# You just be allowed to access this page in case there is some user in the session
 @app.route('/protected')
 def protected():
     if session.get('username'): 
@@ -68,4 +57,5 @@ def protected():
                                username=session.get('username'), 
                                email=session.get('email'))
     else:
+        flash("In order to access the protected page, you need to log in!", 'error')
         return(redirect(url_for('login')))

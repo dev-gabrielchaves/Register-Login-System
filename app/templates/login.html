@@ -1,43 +1,45 @@
 {% extends 'base.html' %}
 {% block content %}
-    {% with messages = get_flashed_messages() %}
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            {% for message in messages %} 
-                {{message}} 
+            {% for category, message in messages %} 
+            <div class="{{category}}">{{message}}</div> 
             {% endfor %}
         {% endif %}
-    {% endwith %}
-    <form class="form" action="" method="POST">
-        {{ form.hidden_tag() }} <!-- Check out on the documentation, but this is necessary to validate and secure our form, use csrf tokken if it's a single field, and hidden_tag() if it's more than one -->
-        <fieldset>
-            <legend>Login</legend>
+        {% endwith %}
+        <form action="" method="POST">
+            {{ form.hidden_tag() }}
+            <h1>Login</h1>
+            <hr>
             <div class="form-group">
-                {{ form.email.label }} <!-- This will generate a label with the name that we've set in the first parameter of the field in our form -->
+                {{ form.email.label }}
                 {% if form.email.errors %}
-                    {{ form.email }} <!-- This will generate the field itself -->
-                    {% for error in form.email.errors %}
-                        {{error}}
-                    {% endfor %}
+                    {{ form.email(class="form-control") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.email.errors %}
+                            <span>{{error}}</span>
+                        {% endfor %}
+                    </div>
                 {% else %}
-                    {{ form.email }}
+                    {{ form.email(class="form-control") }}
                 {% endif %}
             </div>
             <div class="form-group">
                 {{ form.password.label }}
                 {% if form.password.errors %}
-                    {{ form.password }} <!-- This will generate the field itself -->
-                    {% for error in form.password.errors %}
-                        {{error}}
-                    {% endfor %}
+                {{ form.password(class="form-control") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.password.errors %}
+                            <span>{{error}}</span>
+                        {% endfor %}
+                    </div>
                 {% else %}
-                    {{ form.password }}
+                    {{ form.password(class="form-control") }}
                 {% endif %}
             </div>
-            <div class="form-group">
-                {{ form.submit }}
-            </div>
-        </fieldset>
-    </form>
-    <!-- It is not necessary to import 'url_for' in our application, Jinja2 has it by default -->
-    <span>Dont't have an account? <a href="{{url_for('register')}}">Register</a></span>
+            {{ form.submit(class="btn") }}
+        </form>
+        <p class="question">Don't have an account? <a href="{{url_for('register')}}">Register</a></p>
+    </div>
 {% endblock content %}
